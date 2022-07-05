@@ -57,7 +57,7 @@ namespace BulkyBook.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(Category obj)
+        public IActionResult Edit(Category obj)
         {
             if (obj.Name == obj.DisplayOrder.ToString())
             {
