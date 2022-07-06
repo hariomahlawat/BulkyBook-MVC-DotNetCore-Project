@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - BulkyBook</title>
     @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
     <link rel="stylesheet" href="~/css/bootswatchTheme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/toastr/toastr.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/fontawesome/css/all.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BulkyBook.styles.css" asp-append-version="true" />
@@ -56,6 +57,7 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Notification"  />
             @RenderBody()
         </main>
     </div>
@@ -67,6 +69,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
