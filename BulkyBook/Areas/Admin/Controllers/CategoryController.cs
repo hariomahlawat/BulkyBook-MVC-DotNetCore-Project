@@ -4,7 +4,7 @@ using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyBook.Controllers
+namespace BulkyBook.Areas.Admin.Controllers
 {
     public class CategoryController : Controller
     {
@@ -30,10 +30,12 @@ namespace BulkyBook.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category obj)
         {
-            if (obj.Name==obj.DisplayOrder.ToString()) {
-                ModelState.AddModelError("Name","The DisplayOrder can not exactly match the Name.");
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("Name", "The DisplayOrder can not exactly match the Name.");
             }
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 _unitOfWork.Category.Add(obj);
                 _unitOfWork.Save();
                 TempData["success"] = "Category created successfully!";
@@ -45,14 +47,15 @@ namespace BulkyBook.Controllers
         //GET
         public IActionResult Edit(int? id)
         {
-            if (id==null || id==0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-            var category = _unitOfWork.Category.GetFirstOrDefault(c => c.Id==id);
+            var category = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
             //var categorySingle = _db.Categories.SingleOrDefault(c => c.Id == id);
             //var category = _db.Categories.Find(id);
-            if (category == null) { 
+            if (category == null)
+            {
                 return NotFound();
             }
             return View(category);
@@ -83,7 +86,7 @@ namespace BulkyBook.Controllers
             {
                 return NotFound();
             }
-            var category = _unitOfWork.Category.GetFirstOrDefault(c => c.Id==id);
+            var category = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
             //var categorySingle = _db.Categories.SingleOrDefault(c => c.Id == id);
             //var category = _db.Categories.Find(id);
             if (category == null)
