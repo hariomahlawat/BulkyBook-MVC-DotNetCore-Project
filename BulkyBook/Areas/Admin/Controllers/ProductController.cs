@@ -2,6 +2,7 @@
 using BulkyBook.DataAccess.Repository;
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using BulkyBook.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
@@ -22,55 +23,46 @@ namespace BulkyBook.Areas.Admin.Controllers
             IEnumerable<Category> objCategoryList = _unitOfWork.Category.GetAll();
             return View(objCategoryList);
         }
-        
+
 
         //GET
         public IActionResult Upsert(int? id)
         {
-            Product product = new();
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(
-                    u=> new SelectListItem 
-                    {
-                        Text = u.Name,
-                        Value = u.Id.ToString()
-                    });
-            IEnumerable<SelectListItem> CoverType = _unitOfWork.CoverType.GetAll().Select(
-                    u => new SelectListItem
-                    {
-                        Text = u.Name,
-                        Value = u.Id.ToString()
-                    });
+            ProductVM productVM = new()
+            {
+                Product = new(),
+                CategoryList = _unitOfWork.Category.GetAll().Select(i=>new SelectListItem { 
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+            };           
+
 
 
             if (id == null || id == 0)
             {
                 //create product
 
-                return View(product);
+                return View(productVM);
             }
             else 
             { 
                 //update product
             }
 
-            return View(product);
+            return View(productVM);
         }
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Category obj)
+        public IActionResult Upsert(ProductVM obj, IFormFile file)
         {
-            if (obj.Name == obj.DisplayOrder.ToString())
-            {
-                ModelState.AddModelError("Name", "The DisplayOrder can not exactly match the Name.");
-            }
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Category.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Category updated successfully!";
-                return RedirectToAction("Index");
-            }
+            
             return View(obj);
         }
 
