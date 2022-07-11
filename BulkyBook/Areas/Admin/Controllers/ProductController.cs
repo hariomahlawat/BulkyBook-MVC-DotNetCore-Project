@@ -12,10 +12,12 @@ namespace BulkyBook.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ProductController(IUnitOfWork unitOfWork)
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment hostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _hostEnvironment = hostEnvironment;
         }
 
         public IActionResult Index()
@@ -39,7 +41,7 @@ namespace BulkyBook.Areas.Admin.Controllers
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
-                }),
+                })
             };           
 
 
@@ -60,10 +62,29 @@ namespace BulkyBook.Areas.Admin.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(ProductVM obj, IFormFile file)
+        public IActionResult Upsert(ProductVM productVM, IFormFile file)
         {
-            
-            return View(obj);
+            if (ModelState.IsValid)
+            {
+                String wwwRootPath = _hostEnvironment.WebRootPath;
+                if (file!=null)
+                {
+                    string fileName = Guid.NewGuid().ToString();
+                    var uploads = Path.Combine(wwwRootPath, @"images\products");
+                    var extension = Path.GetExtension(file.FileName);
+
+                    using (var fileStream = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    productVM.Product.ImageUrl = @"\images\products\" + fileName + extension;
+                }
+                _unitOfWork.Product.Add(productVM.Product);
+                _unitOfWork.Save();
+                TempData["success"] = "Product created successfully.";
+                return RedirectToAction("Index"); 
+            }
+            return View(productVM);
         }
 
         //GET
