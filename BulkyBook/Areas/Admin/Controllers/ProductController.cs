@@ -22,8 +22,7 @@ namespace BulkyBook.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Category> objCategoryList = _unitOfWork.Category.GetAll();
-            return View(objCategoryList);
+            return View();
         }
 
 
@@ -119,6 +118,20 @@ namespace BulkyBook.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var productList = _unitOfWork.Product.GetAll();
+            return Json(new { data = productList });
+        }
+
+
+        #endregion
+
 
     }
+
+
+
 }
