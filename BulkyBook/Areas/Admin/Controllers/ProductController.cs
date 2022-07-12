@@ -52,7 +52,9 @@ namespace BulkyBook.Areas.Admin.Controllers
                 return View(productVM);
             }
             else 
-            { 
+            {
+                productVM.Product = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+                return View(productVM);
                 //update product
             }
 
