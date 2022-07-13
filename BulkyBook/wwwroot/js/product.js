@@ -20,7 +20,7 @@ function loadDataTable() {
                 "data": "id",
                 "render": function (data) {
                     return `
-                           <div class="w-75 btn-group" role="group">
+                           <div class="w-150 btn-group" role="group">
                         <a href="/Admin/Product/Upsert?id=${data}" class="btn btn-primary mx-2">
                             <i class="fa-solid fa-pencil"></i> Edit</a>
                         <a href="" class="btn btn-danger mx-2">
