@@ -104,37 +104,7 @@ namespace BulkyBook.Areas.Admin.Controllers
             return View(productVM);
         }
 
-        //GET
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            var category = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
-            //var categorySingle = _db.Categories.SingleOrDefault(c => c.Id == id);
-            //var category = _db.Categories.Find(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            return View(category);
-        }
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePost(int? id)
-        {
-            var category = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.Category.Remove(category);
-            _unitOfWork.Save();
-            TempData["success"] = "Category deleted successfully!";
-            return RedirectToAction("Index");
-        }
+
 
         #region API CALLS
         [HttpGet]
@@ -142,6 +112,28 @@ namespace BulkyBook.Areas.Admin.Controllers
         {
             var productList = _unitOfWork.Product.GetAll(includeProperties:"Category,CoverType");
             return Json(new { data = productList });
+        }
+
+        //POST
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var product = _unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);
+            if (product == null)
+            {
+                return Json(new { success = false, message="Error while deleting."});
+            }
+
+            var oldImagePath = Path.Combine( _hostEnvironment.WebRootPath, product.ImageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);
+            }
+
+            _unitOfWork.Product.Remove(product);
+            _unitOfWork.Save();
+            return Json(new { success = true, message = "Delete Successful." });
+
         }
 
 
